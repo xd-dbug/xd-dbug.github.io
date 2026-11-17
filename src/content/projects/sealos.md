@@ -16,7 +16,7 @@ draft: false
 
 ## Problem & motivation
 
-The reason behind this project was simply to see if I could. When I was trying to come up with capstone ideas, all I knew was I wanted it to be memorable. I was inspired by my seniors when I saw some of the things they made and I knew I wanted my project to be just as great. The idea of writing my own operating system seemed interesting on the surface, and the more I dug in and researched it, the more motivated I became to complete the project.
+The reason behind this project was simply to see if I could. When I was trying to come up with capstone ideas, all I knew was that I wanted it to be memorable. I was inspired by my seniors when I saw some of the things they made, and I knew I wanted my project to be just as great. The idea of writing my own operating system seemed interesting on the surface, and the more I dug in and researched it, the more motivated I became to complete the project.
 
 ## Demo
 

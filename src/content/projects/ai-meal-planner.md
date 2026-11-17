@@ -1,7 +1,7 @@
 ---
 title: AI Meal Planner
 summary: A recipe-sharing platform on AWS whose AI meal planner runs as an async Lambda/SQS pipeline, built on a team of four.
-problem: Develop a cloud-based project with an AI feature that showcases different cloud architecture patterns.
+problem: Our team was asked to build a cloud-based project with an AI feature that showcases different cloud architecture patterns.
 stack: [AWS Lambda, SQS, RDS, SAM, Claude API, Python, React]
 role: Team of 4 (cloud platforms course project). Owned the AI meal-planning feature and most of the team's infrastructure work.
 repo: https://github.com/xd-dbug/PRO305
@@ -46,4 +46,4 @@ cd ../frontend && npm install && npm run dev
 
 ## What I learned / next steps
 
-This project taught me how to set up different AWS services (Lambda, SQS, RDS). I also learned how to work with an AI API and fine-tune prompts and responses.
+This project taught me how to set up different AWS services (Lambda, SQS, RDS). I also learned how to work with an AI API and refine prompts and responses.

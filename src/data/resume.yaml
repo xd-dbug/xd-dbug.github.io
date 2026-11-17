@@ -43,7 +43,7 @@ projects:
     stack: [Rust, x86_64 Assembly, QEMU, UEFI]
     start: 2026-06
     highlights:
-      - Built a solo higher-half x86_64 kernel in Rust (~3.7K LOC) booting under UEFI, with a host-side Rust tool to build disk images and launch a Virtual Machine Manager
+      - Built a solo higher-half x86_64 kernel in Rust (~3.7K LOC) booting under UEFI, with a host-side Rust tool to build disk images and boot them in QEMU
       - Implemented 4-level paging, a physical frame allocator, and a kernel heap, enabling dynamic allocation in an environment without the standard library
       - Handled CPU exceptions and hardware interrupts, rendering keyboard input to the UEFI (Unified Extensible Firmware Interface) framebuffer via a bitmap font
       - Engineered kernel threads with context switching in naked-function inline assembly, using a dedicated IST (Interrupt Stack Table) stack to catch stack overflows before triple faults
@@ -56,7 +56,7 @@ projects:
     end: 2026-09
     highlights:
       - Owned the AI meal-planning feature on a 4-person team, building an async pipeline (API Gateway → SQS → Lambda → Claude API → RDS)
-      - Designed the LLM prompts and a job-status model (ready/failed) with client polling, keeping slow plan generation off the request path
+      - Designed the LLM prompts and a job-status model (complete/failed) with client polling, keeping slow plan generation off the request path
       - Took on most of the team's infrastructure work, provisioning AWS resources with SAM and setting up CloudWatch/SNS alerts for error rates, queue failures, and p95 latency
 
   - name: RetroGameAPI
@@ -77,15 +77,15 @@ experience:
     start: 2026-06
     end: 2026-11
     highlights:
-      - Assist customers with purchases and process register transactions in a fast-paced retail setting
-      - Restock and organize inventory to keep displays full and products easy to find
+      - Assisted customers with purchases and processed register transactions in a fast-paced retail setting
+      - Restocked and organized inventory to keep displays full and products easy to find
 
   - role: Front Desk Associate
     org: Neumont University
     location: Salt Lake City, UT
     start: 2026-04
     highlights:
-      - Serve as first point of contact for students, staff, and visitors, answering questions and routing requests
+      - Serve as the first point of contact for students, staff, and visitors, answering questions and routing requests
       - Deliver mail and packages across campus and set up and break down university events
 
   - role: Peer Leader

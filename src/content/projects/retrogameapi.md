@@ -1,7 +1,7 @@
 ---
 title: RetroGameAPI
 summary: A Go REST API for managing retro game collections and peer-to-peer trades, deployed on Kubernetes with autoscaling and monitoring.
-problem: Turning a monolithic API into a distributed system by learning message queues, service monitoring, pod replication, and frontend communication.
+problem: Turning a monolithic API into a distributed system by learning message queues, service monitoring, pod replication, and front-end communication.
 stack: [Go, Gin, MySQL, Kafka, Docker, Kubernetes, Prometheus]
 role: Solo project. Built the API, the email consumer service, the deployment manifests, and a React front end.
 repo: https://github.com/xd-dbug/RetroGameAPI
@@ -43,4 +43,4 @@ The API is at http://localhost (through Nginx), Prometheus at http://localhost:9
 
 ## What I learned / next steps
 
-I learned the pros and cons of distributed systems versus monolithic ones, how to connect real API endpoints from the backend to the frontend, and how pieces such as health dashboards, email sending, and databases can be pulled out and given their own architecture.
+I learned the pros and cons of distributed systems versus monolithic ones, how to connect real API endpoints from the back end to the front end, and how pieces such as health dashboards, email sending, and databases can be pulled out and given their own architecture.

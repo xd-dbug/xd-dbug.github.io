@@ -1,19 +1,18 @@
 ---
-# DRAFT for Damian to review: visible in dev only until `draft: true` is removed.
 title: How I built this site
 description: Astro, content collections, a résumé generated from one YAML file, and a CI pipeline that won't deploy a page that fails an accessibility check.
 date: 2026-11-17
 tags: [astro, tailwind, ci, meta]
-draft: true
+draft: false
 ---
 
-A résumé tells someone what I've worked on, but it can't show them the work. I wanted one link I could hand to a recruiter or put on an application that leads to my projects, how each one works, how to run it, and a résumé that's always current. This post covers how the site is built and the decisions behind it.
+While a résumé can tell someone what I've done, it can't show them the work. That's why I wanted one link I could hand to a recruiter or put on an application that leads to my projects, how each one works, how to run it, and a résumé that's always current. I also wanted the site itself to be a showcase of my work.
 
 ## The goals
 
 Before writing any code I settled on a few rules:
 
-- **Every project gets real documentation.** Not just a screenshot and a GitHub link: what problem it solves, a demo, how it works, how to run it, and what I learned.
+- **Every project gets real documentation.** From how it works to what I learned, every project is shown in detail and linked to its repo.
 - **Content is plain text in Git.** Projects, posts, and the résumé are Markdown and YAML files. Updating the site means editing a file and pushing.
 - **One source for the résumé.** The résumé page, the PDF, and the Experience section on the home page all come from the same file, so they can't disagree.
 - **It should be fast and accessible, and stay that way.** Checks run on every push, not once at launch.
@@ -26,7 +25,7 @@ It's hosted on GitHub Pages and deployed by GitHub Actions, so there's no server
 
 ## The look
 
-I prototyped three different home pages, an editorial one, a terminal-themed one, and a bold one, and picked the terminal look. It fits the work I do, and section headings like `$ ls projects/` and `# about` give the site some personality without getting in the way. The layout borrows ideas from Brittany Chiang's portfolio: a sticky sidebar with my name and navigation on large screens, and a single scrolling column on phones.
+I prototyped three different home pages, each with its own distinct style, and weighed the pros and cons of each. Ultimately, I went with the terminal look because it was the best mix of personality and polish. The layout borrows ideas from Brittany Chiang's portfolio: a sticky sidebar with my name and navigation on large screens, and a single scrolling column on phones.
 
 Dark mode follows your system setting, and the toggle remembers your choice. The theme is set before the page draws, so it never flashes white on a dark-mode visit.
 
@@ -76,7 +75,7 @@ The Lighthouse check paid off right away. On its first run it caught two accessi
 ## What's next
 
 - A custom domain
-- More write-ups as I finish projects, starting with SealOS once my capstone is done
+- More write-ups as I finish projects, and a full SealOS write-up once my capstone is done
 - Testimonials, once I have a couple to share
 
 The source is on [GitHub](https://github.com/xd-dbug/xd-dbug.github.io) if you want to see how any of it works.
