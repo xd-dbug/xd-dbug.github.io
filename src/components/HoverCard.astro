@@ -1,0 +1,44 @@
+---
+// List entry that lifts onto a card on hover (lg+) and dims its siblings.
+// The parent list needs class "group/list". The whole card is the link's hit area.
+interface Props {
+  /** Omit for an unlinked entry (title shown as plain text). */
+  href?: string;
+  title: string;
+  /** Off-site link: shows ↗ instead of →. */
+  external?: boolean;
+  /** On small screens, put the aside (e.g. a thumbnail) after the body instead of before. */
+  asideLastOnMobile?: boolean;
+  /** Title heading level: 3 under a section h2 (home), 2 directly under the page h1 (/projects). */
+  headingLevel?: 2 | 3;
+}
+const { href, title, external = false, asideLastOnMobile = false, headingLevel = 3 } = Astro.props;
+const Heading = `h${headingLevel}` as const;
+---
+
+<div
+  class="group relative grid gap-y-2 pb-1 transition-opacity motion-reduce:transition-none sm:grid-cols-8 sm:gap-8 md:gap-4 lg:group-hover/list:opacity-50 lg:hover:opacity-100!"
+>
+  <div
+    class="absolute -inset-x-4 -inset-y-4 z-0 hidden rounded-md transition motion-reduce:transition-none lg:-inset-x-6 lg:block lg:group-hover:bg-surface lg:group-hover:shadow-sm lg:group-hover:ring-1 lg:group-hover:ring-line"
+  >
+  </div>
+  <div class:list={['z-10 sm:col-span-2', asideLastOnMobile && 'max-sm:order-last']}>
+    <slot name="aside" />
+  </div>
+  <div class="z-10 sm:col-span-6">
+    <Heading class="leading-snug font-medium text-strong">
+      {
+        href ? (
+          <a href={href} class="group-hover:text-accent focus-visible:text-accent">
+            <span class="absolute -inset-x-4 -inset-y-2.5 hidden rounded md:-inset-x-6 md:-inset-y-4 lg:block" />
+            {title} <span aria-hidden="true">{external ? '↗' : '→'}</span>
+          </a>
+        ) : (
+          title
+        )
+      }
+    </Heading>
+    <slot />
+  </div>
+</div>

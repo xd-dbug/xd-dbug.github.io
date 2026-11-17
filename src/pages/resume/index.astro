@@ -1,0 +1,239 @@
+---
+// Résumé from src/data/resume.yaml + src/data/site.ts. The same markup prints to /resume.pdf (step 6),
+// so keep print: variants in mind when editing. Printing always uses the light palette (global.css).
+import PageLayout from '../../layouts/PageLayout.astro';
+import ObfuscatedEmail from '../../components/ObfuscatedEmail.astro';
+import { site } from '../../data/site';
+import { getResume, getProjects, formatRange, formatMonth } from '../../lib/content';
+
+const resume = await getResume();
+const published = new Set((await getProjects()).map((p) => p.id));
+const display = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '');
+const profiles = Object.values(site.links).filter(Boolean);
+
+const h2 = 'mb-3 border-b border-line pb-1 font-mono text-xs font-bold tracking-widest text-strong uppercase print:mb-1.5';
+const row = 'flex flex-wrap items-baseline justify-between gap-x-4';
+const right = 'font-mono text-xs text-muted';
+const bullets = 'mt-1.5 list-disc space-y-1 pl-5 text-sm marker:text-rule print:mt-0.5 print:space-y-0';
+const link = 'hover:text-accent';
+---
+
+<PageLayout title="Résumé" description={`Résumé of ${site.name}, ${site.role.toLowerCase()}.`}>
+  <div class="mb-6 flex flex-wrap items-center justify-between gap-4 print:hidden">
+    <p class="font-mono text-sm text-muted"><span class="text-accent" aria-hidden="true">$</span> cat resume.md</p>
+    <a
+      href="/resume.pdf"
+      class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 font-mono text-sm font-medium text-bg hover:opacity-90"
+    >
+      resume.pdf <span aria-hidden="true">↓</span>
+    </a>
+  </div>
+
+  <article
+    id="resume"
+    class="space-y-7 rounded-md border border-line bg-surface p-6 sm:p-10 print:space-y-4 print:rounded-none print:border-0 print:bg-transparent print:p-0 print:text-[9.5pt] print:leading-[1.3]"
+  >
+    <header class="print:text-center">
+      <h1 class="font-mono text-3xl font-bold tracking-tight text-strong print:text-[20pt]">{site.name}</h1>
+      <ul class="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs text-muted print:justify-center">
+        {resume.location && <li>{resume.location}</li>}
+        <li><ObfuscatedEmail class={link} /></li>
+        {
+          profiles.map((href) => (
+            <li>
+              <a href={href} class={link}>
+                {display(href)}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      {resume.summary && <p class="mt-4 text-fg">{resume.summary}</p>}
+    </header>
+
+    <section aria-labelledby="r-education">
+      <h2 id="r-education" class={h2}>Education</h2>
+      <ol class="space-y-4 print:space-y-2">
+        {
+          resume.education.map((ed) => (
+            <li class="break-inside-avoid">
+              <div class={row}>
+                <h3 class="font-medium text-strong">
+                  {ed.url ? (
+                    <a href={ed.url} class={link}>
+                      {ed.school}
+                    </a>
+                  ) : (
+                    ed.school
+                  )}
+                </h3>
+                {ed.location && <p class={right}>{ed.location}</p>}
+              </div>
+              <div class={row}>
+                <p class="text-sm italic">
+                  {ed.degree}
+                  {ed.gpa && <span class="not-italic text-muted">{' '}· GPA {ed.gpa}</span>}
+                </p>
+                <p class={right}>{formatRange(ed.start, ed.end, 'month')}</p>
+              </div>
+              {(ed.coursework.length > 0 || ed.honors.length > 0 || ed.highlights.length > 0) && (
+                <ul class={bullets}>
+                  {ed.coursework.length > 0 && (
+                    <li>
+                      <span class="font-medium text-strong">Relevant coursework:</span> {ed.coursework.join(', ')}
+                    </li>
+                  )}
+                  {ed.honors.length > 0 && (
+                    <li>
+                      <span class="font-medium text-strong">Honors:</span> {ed.honors.join(', ')}
+                    </li>
+                  )}
+                  {ed.highlights.map((h) => (
+                    <li>{h}</li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section aria-labelledby="r-skills" class="break-inside-avoid">
+      <h2 id="r-skills" class={h2}>Technical skills</h2>
+      <dl class="grid gap-x-6 gap-y-1 text-sm sm:grid-cols-[8.5rem_1fr] print:grid-cols-[8.5rem_1fr] print:gap-y-0.5">
+        {
+          resume.skills.map(({ group, items }) => (
+            <>
+              <dt class="font-medium text-strong">{group}</dt>
+              <dd class="mb-2 sm:mb-0 print:mb-0">{items.join(', ')}</dd>
+            </>
+          ))
+        }
+      </dl>
+    </section>
+
+    {
+      resume.projects.length > 0 && (
+        <section aria-labelledby="r-projects">
+          <h2 id="r-projects" class={h2}>Projects</h2>
+          <ol class="space-y-5 print:space-y-2.5">
+            {resume.projects.map((p) => {
+              const href = p.slug && published.has(p.slug) ? `/projects/${p.slug}/` : p.url;
+              return (
+                <li class="break-inside-avoid">
+                  <div class={row}>
+                    <h3 class="text-strong">
+                      <span class="font-medium">
+                        {href ? (
+                          <a href={href} class={`underline decoration-line underline-offset-2 ${link}`}>
+                            {p.name}
+                          </a>
+                        ) : (
+                          p.name
+                        )}
+                      </span>
+                      {p.stack.length > 0 && <span class="text-sm text-muted italic">{' '}| {p.stack.join(', ')}</span>}
+                    </h3>
+                    <p class={right}>{formatRange(p.start, p.end, 'month')}</p>
+                  </div>
+                  {p.highlights.length > 0 && (
+                    <ul class={bullets}>
+                      {p.highlights.map((h) => (
+                        <li>{h}</li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      )
+    }
+
+    <section aria-labelledby="r-experience">
+      <h2 id="r-experience" class={h2}>Experience</h2>
+      <ol class="space-y-5 print:space-y-2.5">
+        {
+          resume.experience.map((job) => (
+            <li class="break-inside-avoid">
+              <div class={row}>
+                <h3 class="font-medium text-strong">
+                  {job.role}
+                  {/* Print folds the org/location row into this one to keep the PDF to one page. */}
+                  <span class="hidden font-normal italic print:inline">{' '}· {job.org}</span>
+                </h3>
+                <p class={right}>
+                  {job.location && <span class="hidden print:inline">{job.location} ·{' '}</span>}
+                  {formatRange(job.start, job.end, 'month')}
+                </p>
+              </div>
+              <div class={`${row} print:hidden`}>
+                <p class="text-sm italic">
+                  {job.url ? (
+                    <a href={job.url} class={link}>
+                      {job.org}
+                    </a>
+                  ) : (
+                    job.org
+                  )}
+                </p>
+                {job.location && <p class={right}>{job.location}</p>}
+              </div>
+              {job.highlights.length > 0 ? (
+                <ul class={bullets}>
+                  {job.highlights.map((h) => (
+                    <li>{h}</li>
+                  ))}
+                </ul>
+              ) : (
+                job.summary && <p class="mt-1.5 text-sm">{job.summary}</p>
+              )}
+              {job.tech.length > 0 && <p class="mt-1.5 font-mono text-xs text-muted">{job.tech.join(' · ')}</p>}
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    {
+      resume.certifications.length > 0 && (
+        <section aria-labelledby="r-certs" class="break-inside-avoid">
+          <h2 id="r-certs" class={h2}>Certifications</h2>
+          <ul class="space-y-1 text-sm">
+            {resume.certifications.map((c) => (
+              <li class={row}>
+                <span>
+                  {c.url ? (
+                    <a href={c.url} class={`font-medium text-strong ${link}`}>
+                      {c.name}
+                    </a>
+                  ) : (
+                    <span class="font-medium text-strong">{c.name}</span>
+                  )}{' '}
+                  · {c.issuer}
+                </span>
+                <span class={right}>{formatMonth(c.date)}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </article>
+</PageLayout>
+
+<style is:global>
+  @page {
+    size: Letter;
+    margin: 10mm 14mm;
+  }
+  /* In print, everything inherits the article's 9.5pt; text-sm would otherwise print at ~10.5pt. */
+  @media print {
+    #resume .text-sm {
+      font-size: inherit;
+      line-height: inherit;
+    }
+  }
+</style>

@@ -1,0 +1,3 @@
+# Link-checker exclusions (regex, one per line). Used by the "checks" job in .github/workflows/site.yml.
+# LinkedIn answers bots with HTTP 999, so it always looks broken.
+^https?://([a-z]+\.)?linkedin\.com/

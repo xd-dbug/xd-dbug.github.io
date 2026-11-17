@@ -1,0 +1,30 @@
+---
+// Email link that never appears as plain text in the HTML. The address ships reversed in data
+// attributes and is assembled in the browser. Without JS the link goes to /contact/.
+import { site } from '../data/site';
+
+interface Props {
+  /** Link text. Omit to show the address itself (filled in client-side). */
+  label?: string;
+  class?: string;
+}
+const { label, class: className } = Astro.props;
+const rev = (s: string) => [...s].reverse().join('');
+---
+
+<a
+  href="/contact/"
+  data-email-u={rev(site.email.user)}
+  data-email-d={rev(site.email.domain)}
+  data-email-fill={label ? undefined : ''}
+  class={className}>{label ?? 'email (enable JavaScript to see it)'}</a
+>
+
+<script>
+  const rev = (s: string) => [...s].reverse().join('');
+  document.querySelectorAll<HTMLAnchorElement>('a[data-email-u]').forEach((a) => {
+    const address = `${rev(a.dataset.emailU ?? '')}@${rev(a.dataset.emailD ?? '')}`;
+    a.href = `mailto:${address}`;
+    if (a.hasAttribute('data-email-fill')) a.textContent = address;
+  });
+</script>

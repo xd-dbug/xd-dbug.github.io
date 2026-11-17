@@ -1,0 +1,49 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import TagList from '../../components/TagList.astro';
+import { getPosts } from '../../lib/content';
+import { formatDate } from '../../data/site';
+
+export const getStaticPaths = (async () => {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const p = post.data;
+const { Content } = await render(post);
+const minutes = Math.max(1, Math.round((post.body ?? '').split(/\s+/).length / 220));
+---
+
+<PageLayout title={p.title} description={p.description}>
+  <article>
+    <header class="mb-10">
+      <p class="font-mono text-sm text-muted">
+        <span class="text-accent" aria-hidden="true">$</span> cat ~/blog/{post.id}.md
+      </p>
+      <h1 class="mt-2 font-mono text-3xl font-bold tracking-tight text-strong sm:text-4xl">{p.title}</h1>
+      <p class="mt-4 font-mono text-xs text-muted">
+        <time datetime={p.date.toISOString()}>{formatDate(p.date)}</time>
+        {
+          p.updated && (
+            <>
+              {' '}· updated <time datetime={p.updated.toISOString()}>{formatDate(p.updated)}</time>
+            </>
+          )
+        }
+        {' '}· {minutes} min read
+      </p>
+      <TagList tags={p.tags} label="Tags" />
+    </header>
+
+    <div class="prose prose-site max-w-none prose-headings:scroll-mt-8 prose-headings:font-mono prose-h2:text-xl prose-a:underline-offset-2">
+      <Content />
+    </div>
+  </article>
+
+  <p class="mt-16 border-t border-line pt-8 font-mono text-sm">
+    <a href="/blog/" class="text-muted hover:text-accent">← all posts</a>
+  </p>
+</PageLayout>

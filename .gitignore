@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+
+# Astro generated types
+.astro/
+
+# environment
+.env
+.env.*
+!.env.example
+
+# logs
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Lighthouse CI reports (npm run check:lighthouse)
+.lighthouseci/
+
+# Local agent/planning notes (kept out of the public repo)
+.claude/

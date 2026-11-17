@@ -1,0 +1,16 @@
+---
+// "$ ls projects/ # all projects →" style link.
+interface Props {
+  href: string;
+  command: string;
+  comment: string;
+}
+const { href, command, comment } = Astro.props;
+---
+
+<a href={href} class="group mt-12 inline-flex flex-wrap items-center gap-x-2 font-mono text-sm font-medium text-strong">
+  <span class="text-accent" aria-hidden="true">$</span>
+  <span class="border-b border-transparent group-hover:border-accent">{command}</span>
+  <span class="text-muted"><span aria-hidden="true">#</span>{' '}{comment}</span>
+  <span aria-hidden="true" class="transition-transform group-hover:translate-x-1 motion-reduce:transition-none">→</span>
+</a>

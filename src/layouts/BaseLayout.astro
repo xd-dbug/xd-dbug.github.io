@@ -1,0 +1,102 @@
+---
+// Document shell for every page: <head> (SEO, fonts, theme), skip link, cursor spotlight.
+import { Font } from 'astro:assets';
+import '../styles/global.css';
+import { site } from '../data/site';
+
+interface Props {
+  /** Page title; the site name is appended unless this is the home page. */
+  title?: string;
+  description?: string;
+}
+
+const { title, description = site.description } = Astro.props;
+const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.role}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="application/rss+xml" title={`${site.name} · Blog`} href="/rss.xml" />
+    <meta name="generator" content={Astro.generator} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+
+    <meta name="theme-color" content="#f6f8fa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)" />
+
+    <!-- Preload only above-the-fold faces; the rest load on demand. -->
+    <Font cssVariable="--font-inter" preload={[{ weight: 400, style: "normal" }]} />
+    <Font cssVariable="--font-jetbrains-mono" preload={[{ weight: 400, style: "normal" }, { weight: 700, style: "normal" }]} />
+
+    <!-- Theme before first paint: saved choice, else system. Follows system changes until a choice is saved. -->
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        const media = matchMedia('(prefers-color-scheme: dark)');
+        const saved = () => {
+          try {
+            const t = localStorage.getItem('theme');
+            return t === 'light' || t === 'dark' ? t : null;
+          } catch {
+            return null;
+          }
+        };
+        root.dataset.theme = saved() ?? (media.matches ? 'dark' : 'light');
+        media.addEventListener('change', (e) => {
+          if (!saved()) root.dataset.theme = e.matches ? 'dark' : 'light';
+        });
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen leading-relaxed">
+    <a
+      href="#content"
+      class="fixed top-2 left-4 z-50 -translate-y-20 print:hidden rounded-md bg-accent px-4 py-2 font-mono text-sm text-bg focus-visible:translate-y-0"
+      >Skip to content</a
+    >
+    <div id="spotlight" class="pointer-events-none fixed inset-0 z-0 hidden print:hidden!" aria-hidden="true"></div>
+    <div class="relative z-10">
+      <slot />
+    </div>
+  </body>
+</html>
+
+<style>
+  #spotlight {
+    background: radial-gradient(
+      600px at var(--x, 50%) var(--y, 30%),
+      color-mix(in srgb, var(--c-accent) 7%, transparent),
+      transparent 80%
+    );
+  }
+</style>
+
+<script>
+  // Cursor spotlight: fine pointers only (no touch).
+  const spot = document.getElementById('spotlight');
+  if (spot && matchMedia('(pointer: fine)').matches) {
+    spot.classList.remove('hidden');
+    addEventListener(
+      'pointermove',
+      (e) => {
+        spot.style.setProperty('--x', `${e.clientX}px`);
+        spot.style.setProperty('--y', `${e.clientY}px`);
+      },
+      { passive: true },
+    );
+  }
+</script>

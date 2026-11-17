@@ -1,0 +1,98 @@
+# Résumé: the single source for /resume, /resume.pdf, and the home page Experience section.
+# Name, email and profile links come from src/data/site.ts. Dates are YYYY-MM; omit `end` while ongoing.
+# Sections render in this order: education, skills, projects, experience.
+
+education:
+  - school: Neumont University
+    degree: Bachelor of Science in Software Engineering
+    location: Salt Lake City, UT
+    gpa: 3.81/4.0
+    end: 2027-09 # shown as "Expected Sep 2027" until then
+    coursework:
+      - Algorithms & Data Structures I & II
+      - Distributed Systems
+      - Networking
+      - Software Security
+      - Service-Based Architecture
+      - Cloud Architectures
+      - Databases II
+      - Software Design Principles
+    honors:
+      - Dean's List (4 terms)
+
+skills:
+  - group: Languages
+    items: [Rust, Go, Python, JavaScript, SQL]
+  - group: Frameworks
+    items: [React, Node.js, Express, Gin]
+  - group: Cloud & DevOps
+    items:
+      - AWS (Lambda, SQS, RDS, S3, API Gateway, CloudWatch)
+      - SAM
+      - Docker
+      - Kubernetes
+      - Kafka
+      - Nginx
+  - group: Tools
+    items: [Git, GitHub, Linux, QEMU, PostgreSQL, MySQL]
+
+projects:
+  - name: SealOS
+    slug: sealos
+    url: https://github.com/xd-dbug/SealOS # used until the write-up is published
+    stack: [Rust, x86_64 Assembly, QEMU, UEFI]
+    start: 2026-06
+    highlights:
+      - Built a solo higher-half x86_64 kernel in Rust (~3.7K LOC) booting under UEFI, with a host-side Rust tool to build disk images and launch a Virtual Machine Manager
+      - Implemented 4-level paging, a physical frame allocator, and a kernel heap, enabling dynamic allocation in an environment without the standard library
+      - Handled CPU exceptions and hardware interrupts, rendering keyboard input to the UEFI (Unified Extensible Firmware Interface) framebuffer via a bitmap font
+      - Engineered kernel threads with context switching in naked-function inline assembly, using a dedicated IST (Interrupt Stack Table) stack to catch stack overflows before triple faults
+
+  - name: AI Meal Planner
+    slug: ai-meal-planner
+    url: https://github.com/xd-dbug/PRO305 # used until the write-up is published
+    stack: [AWS Lambda, SQS, RDS, SAM, Claude API]
+    start: 2026-06
+    end: 2026-09
+    highlights:
+      - Owned the AI meal-planning feature on a 4-person team, building an async pipeline (API Gateway → SQS → Lambda → Claude API → RDS)
+      - Designed the LLM prompts and a job-status model (ready/failed) with client polling, keeping slow plan generation off the request path
+      - Took on most of the team's infrastructure work, provisioning AWS resources with SAM and setting up CloudWatch/SNS alerts for error rates, queue failures, and p95 latency
+
+  - name: RetroGameAPI
+    slug: retrogameapi
+    url: https://github.com/xd-dbug/RetroGameAPI # used until the write-up is published
+    stack: [Go, Gin, MySQL, Kafka, Docker, Kubernetes]
+    start: 2026-01
+    end: 2026-03
+    highlights:
+      - Built a REST API in Go for managing retro game collections and peer-to-peer trades, with JWT authentication and automatic ownership transfer on accepted trades
+      - Decoupled email notifications into a separate Kafka consumer service so trade requests don't block on email delivery
+      - Deployed to Kubernetes with Horizontal Pod Autoscaling behind an Nginx load balancer, monitored with Prometheus and Grafana
+
+experience:
+  - role: Sales Associate
+    org: Rocket Fizz
+    location: Salt Lake City, UT
+    start: 2026-06
+    end: 2026-11
+    highlights:
+      - Assist customers with purchases and process register transactions in a fast-paced retail setting
+      - Restock and organize inventory to keep displays full and products easy to find
+
+  - role: Front Desk Associate
+    org: Neumont University
+    location: Salt Lake City, UT
+    start: 2026-04
+    highlights:
+      - Serve as first point of contact for students, staff, and visitors, answering questions and routing requests
+      - Deliver mail and packages across campus and set up and break down university events
+
+  - role: Peer Leader
+    org: Neumont University
+    location: Salt Lake City, UT
+    start: 2025-10
+    end: 2026-02
+    highlights:
+      - Mentored 25 incoming students through their first terms, helping them adjust to academics and campus life
+      - Planned and led my own student events and co-led larger events with other peer leaders

@@ -1,0 +1,197 @@
+---
+// Home: sticky intro + scroll-spy nav on the left (lg+), scrolling sections on the right.
+// Layout ideas (split columns, scroll-spy, hover cards, spotlight) inspired by brittanychiang.com.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import ElsewhereLinks from '../components/ElsewhereLinks.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import HoverCard from '../components/HoverCard.astro';
+import TagList from '../components/TagList.astro';
+import CommandLink from '../components/CommandLink.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { site, lastUpdated, formatDate } from '../data/site';
+import { getFeaturedProjects, getPosts, getResume, formatRange } from '../lib/content';
+import { Content as About } from '../content/about.md';
+
+const resume = await getResume();
+const projects = await getFeaturedProjects(3);
+const posts = (await getPosts()).slice(0, 2);
+
+// Education first (student), then jobs, in resume.yaml order.
+const timeline = [
+  ...resume.education.map((e) => ({
+    title: `${e.degree} · ${e.school}`,
+    url: e.url,
+    start: e.start,
+    end: e.end,
+    summary: [e.gpa && `GPA ${e.gpa}`, ...e.honors].filter(Boolean).join(' · '),
+    tech: [] as string[],
+  })),
+  ...resume.experience.map((e) => ({
+    title: `${e.role} · ${e.org}`,
+    url: e.url,
+    start: e.start,
+    end: e.end,
+    summary: e.summary ?? e.highlights[0] ?? '',
+    tech: e.tech,
+  })),
+];
+
+// Projects/Writing (and their nav entries) are hidden until they have published entries.
+const sections = ['about', 'experience', ...(projects.length ? ['projects'] : []), ...(posts.length ? ['writing'] : [])];
+const sectionClass = 'mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24';
+---
+
+<BaseLayout>
+  <div class="mx-auto min-h-screen max-w-7xl px-4 py-12 sm:px-6 md:px-12 md:py-20 lg:px-24 lg:py-0">
+    <div class="lg:flex lg:justify-between lg:gap-4">
+      <header class="lg:sticky lg:top-0 lg:flex lg:max-h-screen lg:w-[48%] lg:flex-col lg:justify-between lg:py-24">
+        <div>
+          <p class="font-mono text-sm text-muted"><span class="text-accent">$</span> whoami</p>
+          <h1 class="mt-2 font-mono text-4xl font-bold tracking-tight text-strong sm:text-5xl">
+            <a href="/">{site.name}</a>
+          </h1>
+          <p class="mt-3 font-mono text-lg font-medium text-accent sm:text-xl">
+            {site.role}<span class="cursor ml-1" aria-hidden="true">▍</span>
+          </p>
+          <p class="mt-4 max-w-sm text-muted">{site.headline}</p>
+          <a
+            href="/resume.pdf"
+            class="mt-6 inline-flex items-center gap-2 rounded-md border border-line px-4 py-2 font-mono text-sm text-strong hover:border-accent"
+          >
+            resume.pdf <span aria-hidden="true">↓</span>
+          </a>
+
+          <nav class="mt-16 hidden lg:block" aria-label="Sections">
+            <ul class="w-max">
+              {
+                sections.map((id, i) => (
+                  <li>
+                    <a href={`#${id}`} data-spy class="group flex items-center py-3">
+                      <span class="mr-4 h-px w-8 bg-rule transition-all group-hover:w-16 group-hover:bg-strong group-focus-visible:w-16 group-data-active:w-16 group-data-active:bg-accent motion-reduce:transition-none" />
+                      <span class="font-mono text-xs tracking-widest text-muted uppercase group-hover:text-strong group-data-active:text-accent">
+                        <span class="opacity-60">{String(i + 1).padStart(2, '0')}.</span> {id}
+                      </span>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </nav>
+        </div>
+
+        <div class="mt-8 flex items-center gap-5">
+          <ThemeToggle />
+          <ElsewhereLinks class="text-sm" />
+        </div>
+      </header>
+
+      <main id="content" class="pt-24 lg:w-[52%] lg:py-24">
+        <section id="about" class={sectionClass} aria-label="About me">
+          <SectionHeading label="about" srOnlyOnLg />
+          <div class="space-y-4 text-muted [&_a]:font-medium [&_a]:text-strong [&_a:hover]:text-accent">
+            <About />
+          </div>
+        </section>
+
+        <section id="experience" class={sectionClass} aria-label="Experience">
+          <SectionHeading label="experience" srOnlyOnLg />
+          <ol class="group/list space-y-12">
+            {
+              timeline.map((item) => (
+                <li>
+                  <HoverCard href={item.url} title={item.title} external>
+                    <p slot="aside" class="mt-1 font-mono text-xs tracking-wide text-muted uppercase">
+                      {formatRange(item.start, item.end)}
+                    </p>
+                    {item.summary && <p class="mt-2 text-sm text-muted">{item.summary}</p>}
+                    <TagList tags={item.tech} />
+                  </HoverCard>
+                </li>
+              ))
+            }
+          </ol>
+          <CommandLink href="/resume/" command="cat resume" comment="full résumé" />
+        </section>
+
+        {projects.length > 0 && (
+        <section id="projects" class={sectionClass} aria-label="Selected projects">
+          <SectionHeading label="projects" srOnlyOnLg />
+          <ul class="group/list space-y-12">
+            {
+              projects.map((project) => (
+                <li>
+                  <ProjectCard project={project} />
+                </li>
+              ))
+            }
+          </ul>
+          <CommandLink href="/projects/" command="ls projects/" comment="all projects" />
+        </section>
+        )}
+
+        {posts.length > 0 && (
+        <section id="writing" class={sectionClass} aria-label="Writing">
+          <SectionHeading label="writing" srOnlyOnLg />
+          <ul class="group/list space-y-12">
+            {
+              posts.map(({ id, data: post }) => (
+                <li>
+                  <HoverCard href={`/blog/${id}/`} title={post.title}>
+                    <time slot="aside" datetime={post.date.toISOString()} class="mt-1 block font-mono text-xs text-muted">
+                      {post.date.getUTCFullYear()}
+                    </time>
+                    <p class="mt-2 text-sm text-muted">{post.description}</p>
+                  </HoverCard>
+                </li>
+              ))
+            }
+          </ul>
+          <CommandLink href="/blog/" command="ls blog/" comment="all posts · rss" />
+        </section>
+        )}
+
+        <footer class="max-w-md pb-16 font-mono text-xs text-muted sm:pb-0">
+          <p>
+            <span class="text-accent">#</span> Hand-built with Astro and Tailwind CSS, set in JetBrains Mono and Inter, deployed
+            to GitHub Pages. Last updated {formatDate(lastUpdated)}.
+          </p>
+        </footer>
+      </main>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .cursor {
+    animation: blink 1.1s steps(1) infinite;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cursor {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // Scroll-spy: mark the side-nav link for the section in the reading band.
+  const links = document.querySelectorAll<HTMLAnchorElement>('[data-spy]');
+  const setActive = (id: string) =>
+    links.forEach((a) => {
+      const on = a.hash === `#${id}`;
+      a.toggleAttribute('data-active', on);
+      if (on) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
+    });
+  const observer = new IntersectionObserver(
+    (entries) => entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
+    { rootMargin: '-30% 0px -60% 0px' },
+  );
+  document.querySelectorAll('main section[id]').forEach((s) => observer.observe(s));
+  setActive('about');
+</script>

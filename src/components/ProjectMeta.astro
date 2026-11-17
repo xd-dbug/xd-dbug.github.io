@@ -1,0 +1,74 @@
+---
+// Fact box at the top of a project page: why, role, stack, links, license, date, contents.
+import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
+import TagList from './TagList.astro';
+import { formatDate } from '../data/site';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  headings: MarkdownHeading[];
+}
+const { project, headings } = Astro.props;
+const p = project.data;
+const links = [
+  { label: 'repo', href: p.repo },
+  { label: 'issues', href: p.issues },
+  { label: 'demo', href: p.demo },
+].filter((l): l is { label: string; href: string } => Boolean(l.href));
+const sections = headings.filter((h) => h.depth === 2);
+const dt = 'font-mono text-xs tracking-wide text-muted uppercase sm:pt-0.5';
+---
+
+<dl class="grid gap-x-6 gap-y-2 rounded-md border border-line bg-surface p-5 text-sm sm:grid-cols-[7rem_1fr] sm:gap-y-4">
+  <dt class={dt}>why</dt>
+  <dd class="mb-2 sm:mb-0">{p.problem}</dd>
+
+  <dt class={dt}>role</dt>
+  <dd class="mb-2 sm:mb-0">{p.role}</dd>
+
+  <dt class={dt}>stack</dt>
+  <dd class="mb-2 sm:mb-0"><TagList tags={p.stack} class="" /></dd>
+
+  <dt class={dt}>links</dt>
+  <dd class="mb-2 flex flex-wrap gap-x-4 gap-y-1 font-mono sm:mb-0">
+    {
+      links.map(({ label, href }) => (
+        <a href={href} class="text-link hover:underline">
+          {label} <span aria-hidden="true">↗</span>
+        </a>
+      ))
+    }
+  </dd>
+
+  {
+    p.license && (
+      <>
+        <dt class={dt}>license</dt>
+        <dd class="mb-2 font-mono sm:mb-0">{p.license}</dd>
+      </>
+    )
+  }
+
+  <dt class={dt}>updated</dt>
+  <dd class="mb-2 font-mono sm:mb-0"><time datetime={p.date.toISOString()}>{formatDate(p.date)}</time></dd>
+
+  {
+    sections.length > 0 && (
+      <>
+        <dt class={dt}>contents</dt>
+        <dd>
+          <ol class="flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs">
+            {sections.map((h) => (
+              <li>
+                <a href={`#${h.slug}`} class="text-muted hover:text-accent">
+                  <span class="text-accent" aria-hidden="true">#</span>{' '}{h.text}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </dd>
+      </>
+    )
+  }
+</dl>

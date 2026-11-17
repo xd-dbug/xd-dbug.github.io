@@ -1,0 +1,23 @@
+---
+// /testimonials/ is only generated once there are at least MIN_TESTIMONIALS entries
+// (getStaticPaths returns no paths otherwise). PageLayout shows the nav link under the same rule.
+import type { GetStaticPaths } from 'astro';
+import PageLayout from '../../layouts/PageLayout.astro';
+import PromptTitle from '../../components/PromptTitle.astro';
+import TestimonialCard from '../../components/TestimonialCard.astro';
+import { getTestimonials, MIN_TESTIMONIALS } from '../../lib/content';
+
+export const getStaticPaths = (async () => {
+  const testimonials = await getTestimonials();
+  return testimonials.length >= MIN_TESTIMONIALS ? [{ params: { index: undefined }, props: { testimonials } }] : [];
+}) satisfies GetStaticPaths;
+
+const { testimonials } = Astro.props;
+---
+
+<PageLayout title="Testimonials" description="What people who've worked with Damian Swiney say.">
+  <PromptTitle command="grep -r 'damian' ~/feedback" title="Testimonials" lead="From people I've worked with." />
+  <div class="space-y-6">
+    {testimonials.map((t) => <TestimonialCard testimonial={t} />)}
+  </div>
+</PageLayout>

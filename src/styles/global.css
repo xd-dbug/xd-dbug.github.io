@@ -1,0 +1,152 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/*
+ * Theme: <html data-theme="light|dark"> is set before first paint by the inline
+ * script in BaseLayout (saved choice, else system preference). Without JS the
+ * prefers-color-scheme block below still gives the right palette.
+ */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Colour tokens. Light palette. */
+:root {
+  color-scheme: light;
+  --c-bg: #f6f8fa;
+  --c-surface: #ffffff;
+  --c-fg: #1f2328;
+  --c-strong: #1f2328;
+  --c-muted: #59636e;
+  --c-line: #d0d7de;
+  --c-rule: #8c959f;
+  --c-accent: #1a7f37;
+  /* Accent text on an accent tint (tag pills): darker so it keeps 4.5:1 on the tint. */
+  --c-accent-ink: #116329;
+  --c-link: #0969da;
+}
+
+/*
+ * Dark palette: once for no-JS system dark, once for the explicit choice. Keep in sync.
+ * Screen only, so printing (and the résumé PDF) always uses the light palette.
+ */
+@media screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --c-bg: #0d1117;
+    --c-surface: #161b22;
+    --c-fg: #c9d1d9;
+    --c-strong: #e6edf3;
+    --c-muted: #8b949e;
+    --c-line: #30363d;
+    --c-rule: #484f58;
+    --c-accent: #3fb950;
+    --c-accent-ink: #3fb950;
+    --c-link: #58a6ff;
+  }
+  :root:not([data-theme="light"]) .astro-code,
+  :root:not([data-theme="light"]) .astro-code span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+}
+@media screen {
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --c-bg: #0d1117;
+    --c-surface: #161b22;
+    --c-fg: #c9d1d9;
+    --c-strong: #e6edf3;
+    --c-muted: #8b949e;
+    --c-line: #30363d;
+    --c-rule: #484f58;
+    --c-accent: #3fb950;
+    --c-accent-ink: #3fb950;
+    --c-link: #58a6ff;
+  }
+  /* Shiki dual themes (astro.config.mjs): light colours inline, dark via --shiki-dark vars. */
+  :root[data-theme="dark"] .astro-code,
+  :root[data-theme="dark"] .astro-code span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+}
+
+.astro-code {
+  border: 1px solid var(--c-line);
+  scrollbar-color: var(--c-rule) transparent;
+}
+
+/* Expose tokens as Tailwind utilities: bg-bg, text-muted, bg-accent/10, border-line, font-mono, ... */
+@theme inline {
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-fg: var(--c-fg);
+  --color-strong: var(--c-strong);
+  --color-muted: var(--c-muted);
+  --color-line: var(--c-line);
+  --color-rule: var(--c-rule);
+  --color-accent: var(--c-accent);
+  --color-accent-ink: var(--c-accent-ink);
+  --color-link: var(--c-link);
+
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+@layer base {
+  html {
+    @apply bg-bg text-fg font-sans antialiased;
+  }
+  /* Paper is white: without this the page tint prints as a grey box inside the margins. */
+  @media print {
+    html {
+      background: #fff;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--c-accent) 30%, transparent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+/* Markdown bodies (project write-ups, blog posts): typography plugin on the site palette. */
+@utility prose-site {
+  --tw-prose-body: var(--c-fg);
+  --tw-prose-headings: var(--c-strong);
+  --tw-prose-lead: var(--c-muted);
+  --tw-prose-links: var(--c-link);
+  --tw-prose-bold: var(--c-strong);
+  --tw-prose-counters: var(--c-muted);
+  --tw-prose-bullets: var(--c-rule);
+  --tw-prose-hr: var(--c-line);
+  --tw-prose-quotes: var(--c-fg);
+  --tw-prose-quote-borders: var(--c-accent);
+  --tw-prose-captions: var(--c-muted);
+  --tw-prose-kbd: var(--c-strong);
+  --tw-prose-code: var(--c-strong);
+  --tw-prose-pre-code: var(--c-fg);
+  --tw-prose-pre-bg: var(--c-surface);
+  --tw-prose-th-borders: var(--c-line);
+  --tw-prose-td-borders: var(--c-line);
+
+  /* Inline code: a quiet chip instead of the plugin's literal backticks. */
+  & :where(code):not(:where(pre *)) {
+    border: 1px solid var(--c-line);
+    border-radius: 0.25rem;
+    background: var(--c-surface);
+    padding: 0.1em 0.3em;
+    font-weight: 500;
+  }
+  & :where(code):not(:where(pre *))::before,
+  & :where(code):not(:where(pre *))::after {
+    content: none;
+  }
+}

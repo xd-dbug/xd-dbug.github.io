@@ -1,0 +1,63 @@
+---
+// Doc-style project page (Write the Docs template): summary, fact box, cover, write-up, prev/next.
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import { Image } from 'astro:assets';
+import PageLayout from '../../layouts/PageLayout.astro';
+import PromptTitle from '../../components/PromptTitle.astro';
+import ProjectMeta from '../../components/ProjectMeta.astro';
+import { getProjects } from '../../lib/content';
+
+export const getStaticPaths = (async () => {
+  const projects = await getProjects();
+  return projects.map((project, i) => ({
+    params: { slug: project.id },
+    props: { project, prev: projects[i - 1], next: projects[i + 1] },
+  }));
+}) satisfies GetStaticPaths;
+
+const { project, prev, next } = Astro.props;
+const p = project.data;
+const { Content, headings } = await render(project);
+---
+
+<PageLayout title={p.title} description={p.summary}>
+  <article>
+    <PromptTitle command={`cat ~/projects/${project.id}/README.md`} title={p.title} lead={p.summary} />
+
+    <ProjectMeta project={project} headings={headings} />
+
+    {
+      p.cover && (
+        <figure class="mt-10">
+          <Image src={p.cover} alt={p.coverAlt ?? ''} widths={[640, 960, 1280]} sizes="(min-width: 768px) 720px, 100vw" class="w-full rounded-md border border-line" />
+        </figure>
+      )
+    }
+
+    <div class="prose prose-site mt-10 max-w-none prose-headings:scroll-mt-8 prose-headings:font-mono prose-h2:text-xl prose-a:underline-offset-2">
+      <Content />
+    </div>
+  </article>
+
+  <nav aria-label="More projects" class="mt-16 grid gap-4 border-t border-line pt-8 font-mono text-sm sm:grid-cols-2">
+    {
+      prev ? (
+        <a href={`/projects/${prev.id}/`} class="group">
+          <span class="block text-xs text-muted">← prev</span>
+          <span class="text-strong group-hover:text-accent">{prev.data.title}</span>
+        </a>
+      ) : (
+        <span />
+      )
+    }
+    {
+      next && (
+        <a href={`/projects/${next.id}/`} class="group sm:text-right">
+          <span class="block text-xs text-muted">next →</span>
+          <span class="text-strong group-hover:text-accent">{next.data.title}</span>
+        </a>
+      )
+    }
+  </nav>
+</PageLayout>

@@ -1,0 +1,47 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import PromptTitle from '../components/PromptTitle.astro';
+import ObfuscatedEmail from '../components/ObfuscatedEmail.astro';
+import { site } from '../data/site';
+
+const display = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '');
+const rows = [
+  { label: 'github', href: site.links.github },
+  { label: 'linkedin', href: site.links.linkedin },
+].filter((r) => r.href);
+const dt = 'font-mono text-xs tracking-wide text-muted uppercase sm:pt-1';
+---
+
+<PageLayout title="Contact" description="How to get in touch with Damian Swiney.">
+  <PromptTitle
+    command="finger damian"
+    title="Contact"
+    lead="I'm open to software developer roles. Email is the best way to reach me."
+  />
+
+  <dl class="grid gap-x-6 gap-y-2 rounded-md border border-line bg-surface p-5 sm:grid-cols-[7rem_1fr] sm:gap-y-4">
+    <dt class={dt}>email</dt>
+    <dd class="mb-2 font-mono sm:mb-0">
+      <ObfuscatedEmail class="text-link hover:underline" />
+      <noscript><span class="text-muted"> (JavaScript keeps the address away from spam bots)</span></noscript>
+    </dd>
+    {
+      rows.map(({ label, href }) => (
+        <>
+          <dt class={dt}>{label}</dt>
+          <dd class="mb-2 font-mono sm:mb-0">
+            <a href={href} class="text-link hover:underline">
+              {display(href)} <span aria-hidden="true">↗</span>
+            </a>
+          </dd>
+        </>
+      ))
+    }
+    <dt class={dt}>résumé</dt>
+    <dd class="font-mono">
+      <a href="/resume/" class="text-link hover:underline">/resume</a>{' '}
+      <span class="text-muted">·</span>{' '}
+      <a href="/resume.pdf" class="text-link hover:underline">resume.pdf <span aria-hidden="true">↓</span></a>
+    </dd>
+  </dl>
+</PageLayout>

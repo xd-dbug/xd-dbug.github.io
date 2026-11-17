@@ -1,0 +1,23 @@
+---
+// Profile links from site.ts (empty ones are hidden) plus the obfuscated email.
+import ObfuscatedEmail from './ObfuscatedEmail.astro';
+import { elsewhere } from '../data/site';
+
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<ul class:list={['flex flex-wrap gap-x-5 gap-y-2 font-mono', className]} aria-label="Elsewhere">
+  {
+    elsewhere.map(({ label, href }) => (
+      <li>
+        <a href={href} class="text-muted hover:text-accent">
+          {label} <span aria-hidden="true">↗</span>
+        </a>
+      </li>
+    ))
+  }
+  <li><ObfuscatedEmail label="email" class="text-muted hover:text-accent" /></li>
+</ul>

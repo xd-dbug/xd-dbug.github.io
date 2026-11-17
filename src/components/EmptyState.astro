@@ -1,0 +1,9 @@
+---
+interface Props {
+  message: string;
+}
+---
+
+<p class="rounded-md border border-dashed border-line p-6 font-mono text-sm text-muted">
+  <span class="text-accent">#</span>{' '}{Astro.props.message}
+</p>

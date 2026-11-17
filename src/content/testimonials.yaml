@@ -1,0 +1,11 @@
+# Testimonials. The /testimonials page and nav link appear once there are at least 2 entries.
+# Only add quotes you have permission to publish. Each entry needs a unique id.
+#
+# - id: jane-doe
+#   quote: Damian took a vague request and came back with a tool the whole team uses.
+#   name: Jane Doe
+#   title: Engineering Manager, Acme
+#   relationship: Managed Damian on the payments team
+#   url: https://linkedin.com/in/jane-doe   # optional
+#   order: 1                                # optional, lower first
+[]
