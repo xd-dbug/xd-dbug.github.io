@@ -1,3 +1,8 @@
 # Link-checker exclusions (regex, one per line). Used by the "checks" job in .github/workflows/site.yml.
 # LinkedIn answers bots with HTTP 999, so it always looks broken.
 ^https?://([a-z]+\.)?linkedin\.com/
+# Local-dev URLs in "Run it locally" sections, e.g. http://localhost:3000.
+^https?://(localhost|127\.0\.0\.1)([:/]|$)
+# The site's own absolute URLs (canonical, og:url, sitemap, RSS). The same pages are already checked
+# as files in dist/ via --root-dir, and the live site can't be fetched before its first deploy.
+^https://xd-dbug\.github\.io(/|$)
